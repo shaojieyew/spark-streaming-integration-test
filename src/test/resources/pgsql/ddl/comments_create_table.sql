@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS comments (id varchar , name varchar, rating int4, ratingText varchar, timestamp timestamp , comment varchar );
