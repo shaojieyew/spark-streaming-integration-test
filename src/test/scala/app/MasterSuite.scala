@@ -1,15 +1,10 @@
 package app
-import java.io.File
 
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.streaming.StreamingQueryListener
 import org.scalatest.{BeforeAndAfterAll, Suites}
-import ru.yandex.qatools.embed.postgresql.EmbeddedPostgres
-import ru.yandex.qatools.embed.postgresql.distribution.Version
 import service.{EmbeddedKafkaService, EmbeddedPostgresService}
 import service.httpServer.RatingApiServer
-
-import scala.reflect.io.Directory
 
 
 object GlobalServices {

@@ -37,7 +37,6 @@ object StreamingSparkApp extends BaseApp with ConfigLoader with SparkStarter {
             comment.copy(ratingText = Some(result))
           }
         })
-      commentDf.show()
 
       commentDf.write
         .mode("append")
