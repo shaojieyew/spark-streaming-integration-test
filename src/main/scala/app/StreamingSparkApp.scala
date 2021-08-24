@@ -27,6 +27,7 @@ object StreamingSparkApp extends BaseApp with ConfigLoader with SparkStarter {
       .load()
     streamingDf.writeStream.foreachBatch((d: DataFrame, batch: Long) => {
 
+
       val commentDf = d.as[KafkaRecord]
         .map(row => {
           val comment = Comment.deserialise(row.value.get)
@@ -38,27 +39,20 @@ object StreamingSparkApp extends BaseApp with ConfigLoader with SparkStarter {
           }
         })
 
-      commentDf.write
-        .mode("append")
-        .partitionBy("id")
-        .parquet(config.get.fileOut.get(0))
+      if (config.get.fileOut.isDefined && config.get.fileOut.get.nonEmpty) {
+        commentDf.write
+          .mode("append")
+          .partitionBy("id")
+          .parquet(config.get.fileOut.get(0))
+      }
 
-      val jdbcConfig = config.get.jdbcConnection.get
-      commentDf.write
-        .mode("append")
-        .format("jdbc")
-        .option("url", jdbcConfig.url.get)
-        .option("user", jdbcConfig.user.get)
-        .option("password", jdbcConfig.password.get)
-        .option("driver", "org.postgresql.Driver")
-        .option("dbtable", config.get.jdbcTableOut.get(0))
-        .save()
-
-      val kafkaRecordDf = commentDf.map(comment => KafkaRecord(key = comment.id, value = Some(comment.serialise()), topic = Some(config.get.kafkaTopicOut.get.head)))
-      kafkaRecordDf.write
-        .format("kafka")
-        .option("kafka.bootstrap.servers", config.get.kafkaHosts.get.mkString(","))
-        .save()
+      if (config.get.kafkaTopicOut.isDefined && config.get.kafkaTopicOut.get.nonEmpty) {
+        val kafkaRecordDf = commentDf.map(comment => KafkaRecord(key = comment.id, value = Some(comment.serialise()), topic = Some(config.get.kafkaTopicOut.get.head)))
+        kafkaRecordDf.write
+          .format("kafka")
+          .option("kafka.bootstrap.servers", config.get.kafkaHosts.get.mkString(","))
+          .save()
+      }
     })
       .option("checkpointLocation", config.get.checkpoint.get)
       .start()

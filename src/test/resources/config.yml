@@ -1,22 +1,35 @@
 kafkaHosts:
   - localhost:9092
 jobs:
-  - name: my-app
-    checkpoint: tmp/kafkaOffset/my-app
+  - name: my-app1
+    checkpoint: tmp/kafkaOffset/my-app1
     startingOffsets: earliest
     sparkConfig:
       spark.sql.autoBroadcastJoinThreshold: "1000"
     enrichmentUrl: http://localhost:9090/rating
-    jdbcConnection:
-      url: jdbc:postgresql://localhost:5432/dbName
-      user: userName
-      password: password
-
     kafkaTopicIn:
-      - my-topic-in
+      - my-topic-in1
     kafkaTopicOut:
       - my-topic-out
+
+  - name: my-app2
+    checkpoint: tmp/kafkaOffset/my-app2
+    startingOffsets: earliest
+    sparkConfig:
+      spark.sql.autoBroadcastJoinThreshold: "1000"
+    enrichmentUrl: http://localhost:9090/rating
+    kafkaTopicIn:
+      - my-topic-in2
+    kafkaTopicOut:
+      - my-topic-out
+
+  - name: my-app3
+    checkpoint: tmp/kafkaOffset/my-app3
+    startingOffsets: earliest
+    sparkConfig:
+      spark.sql.autoBroadcastJoinThreshold: "1000"
+    enrichmentUrl: http://localhost:9090/rating
+    kafkaTopicIn:
+      - my-topic-out
     fileOut:
-      - tmp/file/my-file-out
-    jdbcTableOut:
-      - comments
+      - tmp/test/my-app3/output

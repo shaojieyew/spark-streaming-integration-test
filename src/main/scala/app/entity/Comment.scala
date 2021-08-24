@@ -12,11 +12,7 @@ case class Comment(
                    timestamp: Option[Timestamp]
                  ){
   def serialise(): Array[Byte] = {
-    val stream: ByteArrayOutputStream = new ByteArrayOutputStream()
-    val oos = new ObjectOutputStream(stream)
-    oos.writeObject(this)
-    oos.close()
-    stream.toByteArray
+    Comment.serialise(this)
   }
 }
 
@@ -26,5 +22,13 @@ object Comment{
     val value = ois.readObject.asInstanceOf[Comment]
     ois.close()
     value
+  }
+
+  def serialise(comment: Comment): Array[Byte] = {
+    val stream: ByteArrayOutputStream = new ByteArrayOutputStream()
+    val oos = new ObjectOutputStream(stream)
+    oos.writeObject(comment)
+    oos.close()
+    stream.toByteArray
   }
 }
